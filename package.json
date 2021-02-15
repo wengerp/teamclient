@@ -11,6 +11,7 @@
     "express": "^4"
   },
   "devDependencies": {
+    "@sap/ux-specification": "^1.84.2",
     "sqlite3": "5.0.0"
   },
   "scripts": {
@@ -25,9 +26,14 @@
         "kind": "sqlite",
         "model": "*",
         "credentials": {
-          "database": "db/my-teamclient.db"
+          "database": "db/sap.cloud.schema.db"
         }
       }
     }
-  }
+  },
+  "sapux": [
+    "app/teamclient",
+    "app/teamclient",
+    "app/teamclient"
+  ]
 }
