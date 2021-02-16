@@ -1,4 +1,4 @@
-using  TeamClientService as service from '../srv/teamclientservice';
+using TeamClientService as service from '../srv/teamclientservice';
 using from '../srv/common';
 
 
@@ -7,31 +7,29 @@ annotate service.Teams with @(UI : {
     PresentationVariant                  : {
         SortOrder      : [{
             $Type    : 'Common.SortOrderType',
-            Property : id
+            Property : identifier
         }],
         Visualizations : ['@UI.LineItem']
     },
     LineItem                             : [
     {
         $Type : 'UI.DataField',
-        Value : id
+        Value : identifier
     },
     {
         $Type : 'UI.DataField',
         Value : name
-    }
+    },
     ],
 
-    SelectionFields                      : [
-    name
-    ],
+    SelectionFields                      : [name],
 
     //	Information for the header area of an entity representation
     HeaderInfo                           : {
-        TypeName       : 'Team',
-        TypeNamePlural : 'Teams',
+        TypeName       : 'myTeam',
+        TypeNamePlural : 'myTeams',
         TypeImageUrl   : 'sap-icon://alert',
-        Title          : {Value : id}
+        Title          : {Value : name}
     },
 
     //Facets for additional object header information (shown in the Object Page header)
@@ -40,85 +38,76 @@ annotate service.Teams with @(UI : {
         Target : '@UI.FieldGroup#HeaderGeneralInformation'
     }, ],
     FieldGroup #HeaderGeneralInformation : {Data : [
-    {Value : id},
-    {Value : name}
-    ]}
-    },
+    {Value : identifier},
+    ]},
 
     FieldGroup #GeneralInformation       : {Data : [
     {
         $Type : 'UI.DataField',
-        Value : ID
+        Value : identifier
     },
     {
         $Type : 'UI.DataField',
         Value : name
     }
     ]},
+    FieldGroup #Admin                    : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
+        {
+            $Type : 'UI.DataField',
+            Value : createdAt,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : createdBy,
+        },
+        ],
+    },
 
-    Facets                               : [{
+    Facets                               : [
+    {
         $Type  : 'UI.CollectionFacet',
-        Label  : 'Team',
-        ID     : 'TeamsFacet',
-        Facets : [{
-            $Type  : 'UI.ReferenceFacet',
-            Label  : 'Teams',
-            ID     : 'TeamsFacet',
-            Target : '@UI.FieldGroup#GeneralInformation'
-        }
-
+        Label  : 'Team Overview',
+        ID     : 'TeamOverviewFacet',
+        Facets : [
+            {
+                $Type  : 'UI.ReferenceFacet',
+                Label  : 'General Information',
+                ID     : 'GeneralInformationFacet',
+                Target : '@UI.FieldGroup#GeneralInformation'
+            },
+            {
+                $Type  : 'UI.ReferenceFacet',
+                Target : '@UI.FieldGroup#Admin',
+                Label  : 'Admin Data',
+                ID     : 'AdminDataFacet',
+            },
+        //end of reference facet enhancement
         ]
     },
-        {
-        $Type         : 'UI.ReferenceFacet',
-        Label         : 'Problmes',
-        ID            : 'Problems',
-        Target        : 'problems/@UI.LineItem',
-        ![@UI.Hidden] : isDraft
+    //this facet shows a table on the Object Page by referring to a lineItem annotation via association incidentFlow
+    //the referred LineItem annotation definition for entity IncidentFlow is defined below
+    {
+        $Type  : 'UI.ReferenceFacet',
+        Label  : 'Antworten',
+        ID     : 'AnswersFacet',
+        Target : 'answer/@UI.LineItem',
+    //![@UI.Hidden] : isDraft
     }
-
-
     ]
-);
+});
 
-annotate service.Teams_problems with @(UI : {LineItem : [
+annotate service.Answers with @(UI : {LineItem : [
 
+//begin of column enhancement
 {
     $Type : 'UI.DataField',
-    Value : up__ID
+    Value : answer
 },
+//end of column enhancement
 {
     $Type : 'UI.DataField',
-    Value : problem_ID
+    Value : team_ID
 }
 ]});
-
-/*
-
-//this facet shows a table on the Object Page by referring to a lineItem annotation via association incidentFlow
-//the referred LineItem annotation definition for entity IncidentFlow is defined below
-{
-    $Type         : 'UI.ReferenceFacet',
-    Label         : '{i18n>IncidentProcessFlow}',
-    ID            : 'ProcessFlowFacet',
-    Target        : 'incidentFlow/@UI.LineItem',
-    ![@UI.Hidden] : isDraft
-}
-
-annotate service.IncidentFlow with @(UI : {LineItem : [
-
-
-{
-$Type : 'UI.DataField',
-Value : processStep
-},
-{
-$Type : 'UI.DataField',
-Value : stepStartDate
-},
-{
-$Type : 'UI.DataField',
-Value : stepEndDate
-}
-]});
-*/
